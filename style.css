@@ -1,0 +1,14 @@
+body {
+    background-color: rgb(20, 35, 35);
+    color: white;
+}
+
+img {
+    width: 75px;
+}
+
+div#collection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 5px;
+}
