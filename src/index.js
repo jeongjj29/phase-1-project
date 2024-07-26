@@ -1,20 +1,38 @@
 const collectionDiv = document.querySelector("#collection");
+const descriptionDiv = document.querySelector("#description");
 
-fetch("https://ddragon.leagueoflegends.com/cdn/14.3.1/data/en_US/champion.json")
-  .then((res) => res.json())
-  .then((lol) => {
-    const champions = lol.data;
-    const championNames = Object.keys(champions);
-    championNames.forEach(champion => {
-        createChampionCard(champion);
-    })
-  });
+// fetch champion names
+function displayCards(searchValue) {
+  collectionDiv.innerHTML = "";
+  fetch(
+    "https://ddragon.leagueoflegends.com/cdn/14.3.1/data/en_US/champion.json"
+  )
+    .then((res) => res.json())
+    .then((lol) => {
+      const champions = lol.data;
+      if (searchValue) {
+        const champArray = Object.keys(champions);
+        const championNames = champArray.filter(name => name.startsWith(searchValue))
+        // *** add if no champion names match
+        championNames.forEach((champion) => {
+          createChampionCard(champion);
+        });
+      } else if (!searchValue) {
+        const championNames = Object.keys(champions);
+        championNames.forEach((champion) => {
+          createChampionCard(champion);
+      });
+      }
+      
+    });
+}
 
+// creates cards and appends them to the collectionDiv
 function createChampionCard(champName) {
   const cardDiv = document.createElement("div");
   cardDiv.id = champName;
 
-  const champNameP  = document.createElement("p");
+  const champNameP = document.createElement("p");
   champNameP.textContent = champName;
 
   const champImg = document.createElement("img");
@@ -22,6 +40,9 @@ function createChampionCard(champName) {
   convertImageToBase64(champImgUrl).then((dataUrl) => {
     champImg.src = dataUrl;
   });
+  champImg.addEventListener("click", () => {
+    handleChampionClick(champName);
+  })
 
   cardDiv.append(champImg, champNameP);
   collectionDiv.append(cardDiv);
@@ -44,3 +65,45 @@ async function convertImageToBase64(url) {
     reader.readAsDataURL(blob);
   });
 }
+
+// search bar changes what champions are seen
+const searchBar = document.querySelector("#search");
+searchBar.addEventListener("submit", (e) => {
+  e.preventDefault();
+  searchValue = searchBar.query.value;
+  formattedSearchValue = searchValue.charAt(0).toUpperCase() + searchValue.slice(1).toLowerCase();
+  displayCards(formattedSearchValue);
+});
+
+function handleChampionClick (championName) {
+  descriptionDiv.innerHTML = "";
+  fetch(`https://ddragon.leagueoflegends.com/cdn/14.3.1/data/en_US/champion/${championName}.json`)
+  .then(res => res.json())
+  .then(lol => {
+    const data = lol.data;
+    const championData = data[championName];
+    const name = championData.name;
+    const title = championData.title;
+    const lore = championData.lore;
+    const tags = championData.tags;
+    const stats = championData.stats;
+
+    const nameH2 = document.createElement("h2");
+    nameH2.textContent = name + " ";
+    const titleSpan = document.createElement("span");
+    titleSpan.textContent = title;
+    titleSpan.className = "championTitle"
+    const loreP = document.createElement("p");
+    loreP.textContent = lore;
+    
+    nameH2.append(titleSpan);
+    descriptionDiv.append(nameH2, loreP)
+    
+  })
+}
+
+
+
+
+
+displayCards();
