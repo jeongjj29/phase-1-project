@@ -3,12 +3,22 @@ body {
     color: white;
 }
 
-img {
+img.icon {
     width: 75px;
 }
 
-div#collection {
+#collection {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 5px;
+}
+
+#description {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.championName {
+    display: block;
 }
