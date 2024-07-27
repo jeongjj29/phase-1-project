@@ -36,6 +36,7 @@ function createChampionCard(champName) {
   champNameP.textContent = champName;
 
   const champImg = document.createElement("img");
+  champImg.className = "icon"
   const champImgUrl = `https://ddragon.leagueoflegends.com/cdn/14.14.1/img/champion/${champName}.png`;
   convertImageToBase64(champImgUrl).then((dataUrl) => {
     champImg.src = dataUrl;
@@ -88,16 +89,28 @@ function handleChampionClick (championName) {
     const tags = championData.tags;
     const stats = championData.stats;
 
+    const splashArtImg = document.createElement("img");
+    splashArtImg.className = "splashArt"
+    const champImgUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${name}_0.jpg`;
+    convertImageToBase64(champImgUrl).then((dataUrl) => {
+      splashArtImg.src = dataUrl;
+    });
+
     const nameH2 = document.createElement("h2");
     nameH2.textContent = name + " ";
+    nameH2.class = "championName"
+
     const titleSpan = document.createElement("span");
     titleSpan.textContent = title;
     titleSpan.className = "championTitle"
+    nameH2.append(titleSpan);
+
     const loreP = document.createElement("p");
     loreP.textContent = lore;
+    loreP.className = "championClass"
     
-    nameH2.append(titleSpan);
-    descriptionDiv.append(nameH2, loreP)
+    
+    descriptionDiv.append(nameH2, splashArtImg, loreP)
     
   })
 }
