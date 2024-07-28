@@ -12,17 +12,29 @@ function displayCards(searchValue) {
       const champions = lol.data;
       if (searchValue) {
         for (let champion in champions) {
+          const championData = champions[champion];
           const championNameLowerCase = champion.toLowerCase();
-          if (championNameLowerCase.startsWith(searchValue)) {
-            const championName = champions[champion].name;
+          const championTags = championData.tags;
+
+          if (
+            championNameLowerCase.startsWith(searchValue) &&
+            filterByTags(championTags)
+          ) {
+            const championName = championData.name;
             createChampionCard(champion, championName);
           }
-        }       
+        }
       } else if (!searchValue) {
         for (let champion in champions) {
-          const championName = champions[champion].name;
-          createChampionCard(champion, championName);
-        };
+          const championData = champions[champion];
+          const championNameLowerCase = champion.toLowerCase();
+          const championTags = championData.tags;
+
+          if (filterByTags(championTags)) {
+            const championName = championData.name;
+            createChampionCard(champion, championName);
+          }
+        }
       }
     });
 }
@@ -41,8 +53,15 @@ function createChampionCard(champId, champName) {
   convertImageToBase64(champImgUrl).then((dataUrl) => {
     champImg.src = dataUrl;
   });
+
   champImg.addEventListener("click", () => {
     handleChampionClick(champId);
+  });
+  champImg.addEventListener("mouseenter", () => {
+    champImg.style.cursor = "pointer";
+  });
+  champImg.addEventListener("mouseleave", () => {
+    champImg.style.cursor = "default";
   });
 
   cardDiv.append(champImg, champNameP);
@@ -50,8 +69,6 @@ function createChampionCard(champId, champName) {
 }
 
 // converts image url into base64
-let testImgSrc = "";
-
 async function convertImageToBase64(url) {
   const response = await fetch(url);
   const blob = await response.blob();
@@ -71,10 +88,35 @@ async function convertImageToBase64(url) {
 const searchBar = document.querySelector("#search");
 searchBar.addEventListener("submit", (e) => {
   e.preventDefault();
-  searchValue = searchBar.query.value;
-  formattedSearchValue = searchValue.toLowerCase();
-  displayCards(formattedSearchValue);
+  searchValue = searchBar.query.value.toLowerCase();
+  displayCards(searchValue);
 });
+
+const checkboxes = document.querySelectorAll("input[type='checkbox']");
+const selectedClasses = new Set();
+checkboxes.forEach((checkbox) => {
+  checkbox.addEventListener("change", (event) => {
+    const checkbox = event.target;
+    if (checkbox.checked) {
+      selectedClasses.add(checkbox.id);
+    } else {
+      selectedClasses.delete(checkbox.id);
+    }
+    const searchValue = searchBar.query.value.toLowerCase();
+    displayCards(searchValue);
+  });
+});
+
+function filterByTags(tags) {
+  if (selectedClasses.size === 0) {
+    return true;
+  } else {
+    return [...selectedClasses].every((selectedClass) =>
+      tags.includes(selectedClass)
+    );
+    // return tags.some((tag) => selectedClasses.has(tag));
+  }
+}
 
 function handleChampionClick(championName) {
   descriptionDiv.innerHTML = "";
@@ -95,8 +137,8 @@ function handleChampionClick(championName) {
 
       // IMAGE DIV
       const imageDiv = document.createElement("div");
+      imageDiv.id = "splashArt";
       const splashArtImg = document.createElement("img");
-      splashArtImg.className = "splashArt";
       const champImgUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/loading/${championName}_0.jpg`;
       convertImageToBase64(champImgUrl).then((dataUrl) => {
         splashArtImg.src = dataUrl;
@@ -105,26 +147,28 @@ function handleChampionClick(championName) {
 
       // NAME/TITLE DIV
       const nameTitleDiv = document.createElement("div");
+      nameTitleDiv.id = "name-title";
       const nameH2 = document.createElement("h2");
       nameH2.textContent = name + " ";
       nameH2.class = "championName";
 
-      const titleSpan = document.createElement("span");
-      titleSpan.textContent = title;
-      titleSpan.className = "championTitle";
-      nameH2.append(titleSpan);
-      nameTitleDiv.append(nameH2);
+      const titleH3 = document.createElement("h3");
+      titleH3.textContent = title;
+      titleH3.className = "championTitle";
+      nameTitleDiv.append(nameH2, titleH3);
 
       // LORE DIV
       const loreDiv = document.createElement("div");
+      loreDiv.id = "lore";
       const loreH2 = document.createElement("h2");
-      loreH2.textContent = "Lore:"
+      loreH2.textContent = "Lore:";
       const loreP = document.createElement("p");
       loreP.textContent = lore;
       loreDiv.append(loreH2, loreP);
 
       // DATA DIV
       const dataDiv = document.createElement("div");
+      dataDiv.id = "data";
 
       const classDiv = document.createElement("div");
       const classH3 = document.createElement("h3");
@@ -134,23 +178,24 @@ function handleChampionClick(championName) {
         const tagP = document.createElement("p");
         tagP.textContent = tag;
         classDiv.append(tagP);
-      })
+      });
 
       const resourceDiv = document.createElement("div");
       const resourceH3 = document.createElement("h3");
       const resourceP = document.createElement("p");
-      resourceH3.textContent = "Resource Type:"
+      resourceH3.textContent = "Resource Type:";
       resourceP.textContent = partype;
       resourceDiv.append(resourceH3, resourceP);
 
       const ratingDiv = document.createElement("div");
       const ratingH3 = document.createElement("h3");
-      ratingH3.textContent = "Ratings:"
+      ratingH3.textContent = "Ratings:";
       ratingDiv.append(ratingH3);
       for (let rating in info) {
         const ratingP = document.createElement("p");
         const ratingSpan = document.createElement("span");
-        const formattedRatingText = rating.charAt(0).toUpperCase() + rating.slice(1);
+        const formattedRatingText =
+          rating.charAt(0).toUpperCase() + rating.slice(1);
         ratingSpan.textContent = formattedRatingText + ": ";
         const ratingValueSpan = document.createElement("span");
         ratingValueSpan.textContent = info[rating];
@@ -231,7 +276,7 @@ function handleChampionClick(championName) {
       asP.append(asValueSpan, asPerLevelSpan);
 
       const movespdP = document.createElement("p");
-      movespdP.textContent = "Movement Speed: "
+      movespdP.textContent = "Movement Speed: ";
       const movespdValueSpan = document.createElement("span");
       movespdValueSpan.textContent = stats.movespeed;
       movespdP.append(movespdValueSpan);
@@ -242,12 +287,22 @@ function handleChampionClick(championName) {
       atkrngValueSpan.textContent = stats.attackrange;
       atkrngP.append(atkrngValueSpan);
 
-      statsDiv.append(statsH2, hpP, mpP, hpregenP, mpregenP, armorP, mrP, adP, asP, movespdP, atkrngP);
+      statsDiv.append(
+        statsH2,
+        hpP,
+        mpP,
+        hpregenP,
+        mpregenP,
+        armorP,
+        mrP,
+        adP,
+        asP,
+        movespdP,
+        atkrngP
+      );
 
       descriptionDiv.append(nameTitleDiv, imageDiv, loreDiv, dataDiv, statsDiv);
     });
 }
-
-
 
 displayCards();
