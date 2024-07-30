@@ -171,8 +171,8 @@ function handleChampionClick(championName) {
       dataDiv.id = "data";
 
       const classDiv = document.createElement("div");
-      const classH3 = document.createElement("h3");
-      classH3.textContent = "Classes";
+      const classH3 = document.createElement("h2");
+      classH3.textContent = "Classes:";
       classDiv.append(classH3);
       tags.forEach(function (tag) {
         const tagP = document.createElement("p");
@@ -181,14 +181,14 @@ function handleChampionClick(championName) {
       });
 
       const resourceDiv = document.createElement("div");
-      const resourceH3 = document.createElement("h3");
+      const resourceH3 = document.createElement("h2");
       const resourceP = document.createElement("p");
       resourceH3.textContent = "Resource Type:";
       resourceP.textContent = partype;
       resourceDiv.append(resourceH3, resourceP);
 
       const ratingDiv = document.createElement("div");
-      const ratingH3 = document.createElement("h3");
+      const ratingH3 = document.createElement("h2");
       ratingH3.textContent = "Ratings:";
       ratingDiv.append(ratingH3);
       for (let rating in info) {
@@ -301,7 +301,11 @@ function handleChampionClick(championName) {
         atkrngP
       );
 
-      descriptionDiv.append(nameTitleDiv, imageDiv, loreDiv, dataDiv, statsDiv);
+      const infoContainerDiv = document.createElement("div");
+      infoContainerDiv.id = "champion-info";
+      infoContainerDiv.append(imageDiv, loreDiv, statsDiv, dataDiv);
+
+      descriptionDiv.append(nameTitleDiv, infoContainerDiv);
     });
 }
 

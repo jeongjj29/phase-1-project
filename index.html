@@ -1,43 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>League of Legends Champions</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <header>League of Legends Champions</header>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>League of Legends Champions</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>League of Legends Champions</h1>
 
-        <form id="search">
-            <input type="text" id="query" name="query" placeholder="Search by champion name...">
-            <input type="submit" id="search-button" value="Search" >
-        </form>
+    <form id="search">
+      <input
+        type="text"
+        id="query"
+        name="query"
+        placeholder="Search by champion name..."
+      />
+      <input type="submit" id="search-button" value="Search" />
+    </form>
 
-        <fieldset>
-            <legend>Classes:</legend>
-            <div>
-                <input type="checkbox" id="Assassin" name="Assassin">
-                <label for="Assassin">Assassin</label>
-                <input type="checkbox" id="Fighter" name="Fighter">
-                <label for="Fighter">Fighter</label>
-                <input type="checkbox" id="Mage" name="Mage">
-                <label for="Mage">Mage</label>
-                <input type="checkbox" id="Marksman" name="Marksman">
-                <label for="Marksman">Marksman</label>
-                <input type="checkbox" id="Support" name="Support">
-                <label for="Support">Support</label>
-                <input type="checkbox" id="Tank" name="Tank">
-                <label for="Tank">Tank</label>
-            </div>
-        </fieldset>
+    <fieldset id="fieldset">
+      <legend>Classes:</legend>
+      <div>
+        <input type="checkbox" id="Assassin" name="Assassin" />
+        <label for="Assassin">Assassin</label>
+        <input type="checkbox" id="Fighter" name="Fighter" />
+        <label for="Fighter">Fighter</label>
+        <input type="checkbox" id="Mage" name="Mage" />
+        <label for="Mage">Mage</label>
+        <input type="checkbox" id="Marksman" name="Marksman" />
+        <label for="Marksman">Marksman</label>
+        <input type="checkbox" id="Support" name="Support" />
+        <label for="Support">Support</label>
+        <input type="checkbox" id="Tank" name="Tank" />
+        <label for="Tank">Tank</label>
+      </div>
+    </fieldset>
 
-        <div id="description">
-        </div>
+    <div id="description"></div>
 
-        <div id="collection">
-        </div>
+    <div id="collection"></div>
 
-        <script src="src/index.js"></script>
-    </body>
+    <script src="src/index.js"></script>
+  </body>
 </html>
