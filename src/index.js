@@ -1,5 +1,7 @@
 const collectionDiv = document.querySelector("#collection");
 const descriptionDiv = document.querySelector("#description");
+const commentSectionDiv = document.querySelector("#comment-section");
+const commentListUl = document.querySelector("#comment-list");
 
 // fetch champion names
 function displayCards(searchValue) {
@@ -10,6 +12,7 @@ function displayCards(searchValue) {
     .then((res) => res.json())
     .then((lol) => {
       const champions = lol.data;
+
       if (searchValue) {
         for (let champion in champions) {
           const championData = champions[champion];
@@ -39,9 +42,10 @@ function displayCards(searchValue) {
     });
 }
 
-function handleCloseButton() {
+function handleCloseButton(championName) {
   descriptionDiv.innerHTML = "";
   descriptionDiv.className = "hidden";
+  commentSectionDiv.className = "hidden";
 }
 
 // creates cards and appends them to the collectionDiv
@@ -127,7 +131,8 @@ function filterByTags(tags) {
 }
 
 function handleChampionClick(championName) {
-  descriptionDiv.innerHTML = "";
+  handleCloseButton(championName);
+
   fetch(
     `https://ddragon.leagueoflegends.com/cdn/14.3.1/data/en_US/champion/${championName}.json`
   )
@@ -374,6 +379,145 @@ function handleChampionClick(championName) {
       );
       descriptionDiv.className = "";
     });
+  addCommentForm(championName);
+  getComments(championName);
+}
+
+function appendCommentLi(element, comments, championName) {
+  const userNameSpan = document.createElement("span");
+  userNameSpan.textContent = element.username;
+
+  const dateSpan = document.createElement("span");
+  const date = new Date(element.dateCreated);
+  const formattedDate =
+    date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }) +
+    " " +
+    date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  dateSpan.textContent = formattedDate;
+
+  const commentP = document.createElement("p");
+  commentP.textContent = element.comment;
+
+  const commentLi = document.createElement("li");
+  commentLi.append(userNameSpan, dateSpan, commentP);
+
+  const deleteCommentButton = document.createElement("button");
+  deleteCommentButton.textContent = "Delete";
+  deleteCommentButton.addEventListener("click", () => {
+    const updatedComments = comments.filter((comment) => comment !== element);
+    fetch(`http://localhost:3000/champions/${championName}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ comments: updatedComments }),
+    }).then(() => commentLi.remove());
+  });
+  commentLi.append(deleteCommentButton);
+
+  if (document.querySelector("li")) {
+    commentListUl.insertBefore(commentLi, document.querySelector("li"));
+  } else {
+    commentListUl.append(commentLi);
+  }
+}
+
+function getComments(championName) {
+  fetch(`http://localhost:3000/champions/${championName}`)
+    .then((res) => res.json())
+    .then((data) => {
+      commentSectionDiv.className = "";
+      commentListUl.innerHTML = "";
+
+      const comments = data.comments;
+      // const sortedComments = comments.sort(
+      //   (a, b) => new Date(a.dateCreated) - new Date(b.dateCreated)
+      // );
+      // console.log(sortedComments);
+      comments.forEach((element) => {
+        appendCommentLi(element, comments, championName);
+      });
+    });
+}
+
+function handleCommentFormSubmit(championName) {
+  fetch(`http://localhost:3000/champions/${championName}`)
+    .then((res) => res.json())
+    .then((data) => {
+      const newComments = data.comments;
+      const commentForm = document.querySelector("#new-comment-form");
+      const newComment = {
+        username: commentForm.username.value,
+        dateCreated: new Date(),
+        comment: commentForm.comment.value,
+      };
+      newComments.push(newComment);
+
+      fetch(`http://localhost:3000/champions/${championName}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          comments: newComments,
+        }),
+      }).then(() => {
+        commentForm.reset;
+        appendCommentLi(newComment);
+      });
+    });
+}
+
+function addCommentForm(championName) {
+  const formExists = document.querySelector("#new-comment-form");
+  if (formExists) {
+    formExists.remove();
+  }
+  const usernameLabel = document.createElement("label");
+  usernameLabel.textContent = "Username: ";
+  usernameLabel.setAttribute("for", "username");
+
+  const usernameInput = document.createElement("input");
+  usernameInput.type = "text";
+  usernameInput.id = "username";
+  usernameInput.name = "username";
+
+  const commentLabel = document.createElement("label");
+  commentLabel.textContent = "Comment: ";
+  commentLabel.setAttribute("for", "comment");
+
+  const commentTextArea = document.createElement("textarea");
+  commentTextArea.id = "comment";
+  commentTextArea.name = "comment";
+  commentTextArea.rows = 5;
+  commentTextArea.cols = "35";
+
+  const commentInput = document.createElement("input");
+  commentInput.type = "submit";
+  commentInput.id = "submit-button";
+  commentInput.value = "Post Comment";
+
+  const commentForm = document.createElement("form");
+  commentForm.id = "new-comment-form";
+  commentForm.append(
+    usernameLabel,
+    usernameInput,
+    commentLabel,
+    commentTextArea,
+    commentInput
+  );
+
+  commentForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    handleCommentFormSubmit(championName);
+  });
+
+  commentSectionDiv.insertBefore(commentForm, commentListUl);
 }
 
 displayCards();
