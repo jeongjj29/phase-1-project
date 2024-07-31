@@ -1,21 +1,60 @@
+@font-face {
+  font-family: "Beaufort";
+  src: url("./fonts/BeaufortforLOL-Bold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Spiegel";
+  src: url("./fonts/Spiegel_TT_Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
-  background-color: rgb(20, 35, 35);
+  background-image: radial-gradient(circle, #091428 49%, #0a1428 50%);
   color: white;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Beaufort";
+}
+
+p,
+span {
+  font-family: "Spiegel";
 }
 
 h1 {
   text-align: center;
-  font-size: 40px;
+  font-size: 40pt;
   margin: 10px;
+  color: #c89b3c;
 }
 
 h2 {
-  font-size: 30px;
+  font-size: 28pt;
   margin-bottom: 0;
 }
 
 h3 {
-  font-size: 25px;
+  font-size: 23pt;
+}
+
+h4 {
+  font-size: 18pt;
+}
+
+h5 {
+  font-size: 14pt;
+  margin: 0;
+  margin-top: 20px;
+  margin-bottom: 5px;
 }
 
 #search {
@@ -57,22 +96,23 @@ img.icon {
 }
 
 #description {
-  background-color: rgb(51, 51, 51);
+  background-image: linear-gradient(to bottom right, #0a323c, #091428);
   width: 90%;
   margin: auto;
   margin-top: 10px;
   border: solid;
-  border-color: black;
   padding-top: 10px;
   padding-bottom: 10px;
   position: relative;
+  border-color: #3c3c41;
+  border-radius: 1%;
 }
 
 #close-description-box {
   position: absolute;
   top: 15px;
   right: 15px;
-  color: red;
+  color: #c8aa6e;
   width: 30px;
   height: 30px;
   font-size: 25px;
@@ -83,7 +123,8 @@ img.icon {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  border-color: rgb(194, 181, 181);
+  border-color: #3c3c41;
+  border-radius: 1%;
 }
 
 #description p {
@@ -97,6 +138,7 @@ img.icon {
   align-content: center;
   margin: auto;
   margin-bottom: 10px;
+  color: #cdfafa;
 }
 
 #name-title h2 {
@@ -120,10 +162,9 @@ section {
   flex-direction: column;
   width: 324px;
   padding: 0;
-  border: 10px;
-  border-color: black;
   justify-content: flex-start;
   flex-wrap: wrap;
+  border-radius: 1%;
 }
 
 section#splashart {
@@ -140,8 +181,7 @@ section#splashArt img {
 
 section#lore {
   text-align: center;
-  border: solid;
-  border-width: 3px;
+  border: 3px solid #3c3c41;
   align-items: center;
 }
 
@@ -157,13 +197,12 @@ div#stats-container {
   grid-column-gap: 0px;
   grid-row-gap: 0px;
   align-items: center;
-  border: solid;
-  border-width: 3px;
+  border: 3px solid #3c3c41;
   align-self: center;
   height: 100%;
 }
 
-div#stats-container h2 {
+div#stats-container h3 {
   margin: 0px;
   grid-area: 1 / 1 / 2 / 3;
   text-align: center;
@@ -175,10 +214,7 @@ div#stats-container div {
   width: 160px;
 }
 
-div.stat h4 {
-  margin: 0;
-  margin-top: 20px;
-  margin-bottom: 5px;
+div.stat h5 {
 }
 
 div#stats-container div:nth-of-type(1) {
@@ -224,7 +260,7 @@ div#stats-container .stat {
 
 div#champion-info section#data {
   text-align: center;
-  border: solid, 3px;
+  border: 3px solid #463714;
   padding: 0px;
   align-content: center;
   align-items: center;
@@ -235,7 +271,7 @@ section#data div {
   margin: auto;
 }
 
-div.tag h2 {
+div.tag h3 {
   margin: 5px;
 }
 
