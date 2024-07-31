@@ -42,7 +42,7 @@ function displayCards(searchValue) {
     });
 }
 
-function handleCloseButton(championName) {
+function handleCloseButton() {
   descriptionDiv.innerHTML = "";
   descriptionDiv.className = "hidden";
   commentSectionDiv.className = "hidden";
@@ -181,11 +181,11 @@ function handleChampionClick(championName) {
       // LORE DIV
       const loreSection = document.createElement("section");
       loreSection.id = "lore";
-      const loreH2 = document.createElement("h2");
-      loreH2.textContent = "Lore";
+      const loreH3 = document.createElement("h3");
+      loreH3.textContent = "Lore";
       const loreP = document.createElement("p");
       loreP.textContent = lore;
-      loreSection.append(loreH2, loreP);
+      loreSection.append(loreH3, loreP);
 
       // DATA DIV
       const dataSection = document.createElement("section");
@@ -193,7 +193,7 @@ function handleChampionClick(championName) {
 
       const classDiv = document.createElement("div");
       classDiv.className = "tag";
-      const classH3 = document.createElement("h2");
+      const classH3 = document.createElement("h3");
       classH3.textContent = "Classes";
       classDiv.append(classH3);
       tags.forEach(function (tag) {
@@ -204,7 +204,7 @@ function handleChampionClick(championName) {
 
       const resourceDiv = document.createElement("div");
       resourceDiv.className = "tag";
-      const resourceH3 = document.createElement("h2");
+      const resourceH3 = document.createElement("h3");
       const resourceP = document.createElement("p");
       resourceH3.textContent = "Resource Type";
       resourceP.textContent = partype;
@@ -212,7 +212,7 @@ function handleChampionClick(championName) {
 
       const ratingDiv = document.createElement("div");
       ratingDiv.className = "tag";
-      const ratingH3 = document.createElement("h2");
+      const ratingH3 = document.createElement("h3");
       ratingH3.textContent = "Ratings";
       ratingDiv.append(ratingH3);
       for (let rating in info) {
@@ -234,12 +234,12 @@ function handleChampionClick(championName) {
       // STATS
       const statsSection = document.createElement("section");
       statsSection.id = "stats";
-      const statsH2 = document.createElement("h2");
-      statsH2.textContent = "Champion Stats";
+      const statsH3 = document.createElement("h3");
+      statsH3.textContent = "Stats";
 
       const hpDiv = document.createElement("div");
       hpDiv.className = "stat";
-      const hpH4 = document.createElement("h4");
+      const hpH4 = document.createElement("h5");
       hpH4.textContent = "Health";
       const hpValueSpan = document.createElement("span");
       hpValueSpan.textContent = stats.hp;
@@ -250,7 +250,7 @@ function handleChampionClick(championName) {
 
       const mpDiv = document.createElement("div");
       mpDiv.className = "stat";
-      const mpH4 = document.createElement("h4");
+      const mpH4 = document.createElement("h5");
       mpH4.textContent = "Resource";
       const mpValueSpan = document.createElement("span");
       mpValueSpan.textContent = stats.mp ? stats.mp : "N/A";
@@ -266,7 +266,7 @@ function handleChampionClick(championName) {
 
       const hpregenDiv = document.createElement("div");
       hpregenDiv.className = "stat";
-      const hpregenH4 = document.createElement("h4");
+      const hpregenH4 = document.createElement("h5");
       hpregenH4.textContent = "Health Regen";
       const hpregenValueSpan = document.createElement("span");
       hpregenValueSpan.textContent = stats.hpregen;
@@ -276,7 +276,7 @@ function handleChampionClick(championName) {
 
       const mpregenDiv = document.createElement("div");
       mpregenDiv.className = "stat";
-      const mpregenH4 = document.createElement("h4");
+      const mpregenH4 = document.createElement("h5");
       mpregenH4.textContent = "Resource Regen";
       const mpregenValueSpan = document.createElement("span");
       mpregenValueSpan.textContent = stats.mpregen ? stats.mpregen : "N/A";
@@ -292,7 +292,7 @@ function handleChampionClick(championName) {
 
       const armorDiv = document.createElement("div");
       armorDiv.className = "stat";
-      const armorH4 = document.createElement("h4");
+      const armorH4 = document.createElement("h5");
       armorH4.textContent = "Armor";
       const armorValueSpan = document.createElement("span");
       armorValueSpan.textContent = stats.armor;
@@ -302,7 +302,7 @@ function handleChampionClick(championName) {
 
       const mrDiv = document.createElement("div");
       mrDiv.className = "stat";
-      const mrH4 = document.createElement("h4");
+      const mrH4 = document.createElement("h5");
       mrH4.textContent = "Magic Resist";
       const mrValueSpan = document.createElement("span");
       mrValueSpan.textContent = stats.spellblock;
@@ -312,7 +312,7 @@ function handleChampionClick(championName) {
 
       const adDiv = document.createElement("div");
       adDiv.className = "stat";
-      const adH4 = document.createElement("h4");
+      const adH4 = document.createElement("h5");
       adH4.textContent = "Attack Damage";
       const adValueSpan = document.createElement("span");
       adValueSpan.textContent = stats.attackdamage;
@@ -322,8 +322,8 @@ function handleChampionClick(championName) {
 
       const asDiv = document.createElement("div");
       asDiv.className = "stat";
-      const asH4 = document.createElement("h4");
-      asH4.textContent = "Attack Speed: ";
+      const asH4 = document.createElement("h5");
+      asH4.textContent = "Attack Speed";
       const asValueSpan = document.createElement("span");
       asValueSpan.textContent = stats.attackspeed;
       const asPerLevelSpan = document.createElement("span");
@@ -332,16 +332,16 @@ function handleChampionClick(championName) {
 
       const movespdDiv = document.createElement("div");
       movespdDiv.className = "stat";
-      const movespdH4 = document.createElement("h4");
-      movespdH4.textContent = "Movement Speed: ";
+      const movespdH4 = document.createElement("h5");
+      movespdH4.textContent = "Movement Speed";
       const movespdValueSpan = document.createElement("span");
       movespdValueSpan.textContent = stats.movespeed;
       movespdDiv.append(movespdH4, movespdValueSpan);
 
       const atkrngDiv = document.createElement("div");
       atkrngDiv.className = "stat";
-      const atkrngH4 = document.createElement("h4");
-      atkrngH4.textContent = "Attack Range: ";
+      const atkrngH4 = document.createElement("h5");
+      atkrngH4.textContent = "Attack Range";
       const atkrngValueSpan = document.createElement("span");
       atkrngValueSpan.textContent = stats.attackrange;
       atkrngDiv.append(atkrngH4, atkrngValueSpan);
@@ -349,7 +349,7 @@ function handleChampionClick(championName) {
       const statsContainerDiv = document.createElement("div");
       statsContainerDiv.id = "stats-container";
       statsContainerDiv.append(
-        statsH2,
+        statsH3,
         hpDiv,
         hpregenDiv,
         mpDiv,
@@ -383,6 +383,7 @@ function handleChampionClick(championName) {
   getComments(championName);
 }
 
+// ADDS NEW-COMMENT-FORM AND LOADS EXISTING COMMENTS
 function appendCommentLi(element, comments, championName) {
   const userNameSpan = document.createElement("span");
   userNameSpan.textContent = element.username;
