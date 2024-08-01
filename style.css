@@ -55,7 +55,7 @@ h4 {
 
 h5 {
   font-size: 14pt;
-  margin-top: 15px;
+  margin-top: 10px;
   margin-bottom: 5px;
   color: #c8aa6e;
 }
@@ -187,8 +187,9 @@ section#lore p {
 section#stats {
   display: grid;
   grid-template-columns: repeat(2, auto);
-  grid-template-rows: 54.5px repeat(5, auto);
-  grid-gap: 0;
+  grid-template-rows: 30px repeat(5, auto);
+  grid-column-gap: 4px;
+  grid-row-gap: 1px;
   align-items: center;
   justify-content: center;
   padding: 0;
@@ -203,13 +204,14 @@ section#stats h3 {
 
 section#stats div {
   height: 100px;
-  width: 165px;
-  border: 3px solid #454550;
+  width: 155px;
+  border: 5px solid #3c3c41;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  border-radius: 10%;
 }
 
 div#champion-info section#data {

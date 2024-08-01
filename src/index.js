@@ -206,6 +206,24 @@ function filterByTags(tags) {
   }
 }
 
+function createStatElement(statName, baseValue, perLevel) {
+  const statDiv = document.createElement("div");
+  statDiv.className = "stat";
+
+  const statH4 = document.createElement("h5");
+  statH4.textContent = statName;
+
+  const statValueSpan = document.createElement("span");
+  statValueSpan.textContent = baseValue ? baseValue : "N/A";
+
+  const statPerLevelSpan = document.createElement("span");
+  statPerLevelSpan.textContent = perLevel ? ` ( +${perLevel} per Level )` : "";
+
+  statDiv.append(statH4, statValueSpan, statPerLevelSpan);
+
+  return statDiv;
+}
+
 // ADDS EVENT LISTENERS
 function addSearchListener() {
   searchBar.addEventListener("submit", (e) => {
@@ -403,62 +421,6 @@ function handleChampionClick(championName) {
     behavior: "smooth",
   });
 }
-
-function createStatElement(statName, baseValue, perLevel) {
-  const statDiv = document.createElement("div");
-  statDiv.className = "stat";
-
-  const statH4 = document.createElement("h5");
-  statH4.textContent = statName;
-
-  const statValueSpan = document.createElement("span");
-  statValueSpan.textContent = baseValue ? baseValue : "N/A";
-
-  const statPerLevelSpan = document.createElement("span");
-  statPerLevelSpan.textContent = perLevel ? ` ( +${perLevel} per Level )` : "";
-
-  statDiv.append(statH4, statValueSpan, statPerLevelSpan);
-
-  return statDiv;
-}
-
-// RETURNS MODIFIED STAT NAME
-// function modifyStatName(stat) {
-//   switch (stat) {
-//     case "hp":
-//       return "Health";
-//       break;
-//     case "hpregen":
-//       return "Health Regen";
-//       break;
-//     case "mp":
-//       return "Resource";
-//       break;
-//     case "mpregen":
-//       return "Resource Regen";
-//       break;
-//     case "armor":
-//       return "Armor";
-//       break;
-//     case "spellblock":
-//       return "Magic Resist";
-//       break;
-//     case "attackdamage":
-//       return "Attack Damage";
-//       break;
-//     case "attackspeed":
-//       return "Attack Speed";
-//       break;
-//     case "movespeed":
-//       return "Movement Speed";
-//       break;
-//     case "attackrange":
-//       return "Attack Range";
-//       break;
-//     default:
-//       return "Stat Not Found";
-//   }
-// }
 
 function handleCommentFormSubmit(championName) {
   fetch(`http://localhost:3000/champions/${championName}`)
