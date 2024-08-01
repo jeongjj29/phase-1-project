@@ -2,9 +2,13 @@ const collectionDiv = document.querySelector("#collection");
 const descriptionDiv = document.querySelector("#description");
 const commentSectionDiv = document.querySelector("#comment-section");
 const commentListUl = document.querySelector("#comment-list");
+const searchBar = document.querySelector("#search");
+const checkboxes = document.querySelectorAll("input[type='checkbox']");
 
 const championsArray = [];
+const selectedClasses = new Set();
 
+// INITIAL FETCH
 function getChampions() {
   fetch(
     "https://ddragon.leagueoflegends.com/cdn/14.3.1/data/en_US/champion.json"
@@ -13,9 +17,14 @@ function getChampions() {
     .then((lol) => {
       championsArray.push(...Object.values(lol.data));
     })
-    .then(() => displayCards());
+    .then(() => {
+      addSearchListener();
+      addCheckBoxListener();
+      displayCards();
+    });
 }
 
+// DISPLAYS CARDS BASED ON SEARCHVALUE AND CHECKBOXES
 function displayCards(searchValue) {
   collectionDiv.innerHTML = "";
   const champions = championsArray
@@ -33,22 +42,10 @@ function displayCards(searchValue) {
   );
 }
 
-function handleCloseButton() {
-  descriptionDiv.innerHTML = "";
-  descriptionDiv.className = "hidden";
-  commentListUl.innerHTML = "";
-  const newCommentForm = document.querySelector("#new-comment-form");
-  if (newCommentForm) {
-    newCommentForm.remove();
-  }
-  commentSectionDiv.className = "hidden";
-}
-
-// creates cards and appends them to the collectionDiv
+// CREATES CARDS AND APPENDS THEM TO THE COLLECTION DIV
 function createChampionCard(champId, champName, championTags) {
   const cardDiv = document.createElement("div");
   cardDiv.id = champId;
-  cardDiv.classList.add(...championTags);
 
   const champNameP = document.createElement("p");
   champNameP.textContent = champName;
@@ -68,7 +65,7 @@ function createChampionCard(champId, champName, championTags) {
   collectionDiv.append(cardDiv);
 }
 
-// converts image url into base64
+// CONVERTS URL IMAGES TO BASE64
 async function convertImageToBase64(url) {
   const response = await fetch(url);
   const blob = await response.blob();
@@ -84,32 +81,121 @@ async function convertImageToBase64(url) {
   });
 }
 
-// search bar changes what champions are seen
-const searchBar = document.querySelector("#search");
-searchBar.addEventListener("submit", (e) => {
-  e.preventDefault();
-  handleCloseButton();
-  searchValue = searchBar.query.value.toLowerCase();
-  displayCards(searchValue);
-  // this.query.value = "";
-});
+// SENDS GET REQUEST FOR COMMENTS
+function getComments(championName) {
+  fetch(`http://localhost:3000/champions/${championName}`)
+    .then((res) => res.json())
+    .then((data) => {
+      commentSectionDiv.className = "";
+      commentListUl.innerHTML = "";
 
-const checkboxes = document.querySelectorAll("input[type='checkbox']");
-const selectedClasses = new Set();
-checkboxes.forEach((checkbox) => {
-  checkbox.addEventListener("change", (event) => {
-    handleCloseButton();
-    const checkbox = event.target;
-    if (checkbox.checked) {
-      selectedClasses.add(checkbox.id);
-    } else {
-      selectedClasses.delete(checkbox.id);
-    }
-    const searchValue = searchBar.query.value.toLowerCase();
-    displayCards(searchValue);
+      const comments = data.comments;
+      // const sortedComments = comments.sort(
+      //   (a, b) => new Date(a.dateCreated) - new Date(b.dateCreated)
+      // );
+      // console.log(sortedComments);
+      comments.forEach((element) => {
+        appendCommentLi(element, comments, championName);
+      });
+    });
+}
+
+// ADDS NEW-COMMENT-FORM AND APPENDS TO COMMENT SECTION
+function addCommentForm(championName) {
+  const formExists = document.querySelector("#new-comment-form");
+  if (formExists) {
+    formExists.remove();
+  }
+  const usernameLabel = document.createElement("label");
+  usernameLabel.textContent = "Username: ";
+  usernameLabel.setAttribute("for", "username");
+
+  const usernameInput = document.createElement("input");
+  usernameInput.type = "text";
+  usernameInput.id = "username";
+  usernameInput.name = "username";
+
+  const commentLabel = document.createElement("label");
+  commentLabel.textContent = "Comment: ";
+  commentLabel.setAttribute("for", "comment");
+
+  const commentTextArea = document.createElement("textarea");
+  commentTextArea.id = "comment";
+  commentTextArea.name = "comment";
+  commentTextArea.rows = 5;
+  commentTextArea.cols = "35";
+
+  const commentInput = document.createElement("input");
+  commentInput.type = "submit";
+  commentInput.id = "submit-button";
+  commentInput.value = "Post Comment";
+
+  const commentForm = document.createElement("form");
+  commentForm.id = "new-comment-form";
+  commentForm.append(
+    usernameLabel,
+    usernameInput,
+    commentLabel,
+    commentTextArea,
+    commentInput
+  );
+
+  commentForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    handleCommentFormSubmit(championName);
   });
-});
 
+  commentSectionDiv.insertBefore(commentForm, commentListUl);
+}
+
+// APPENDS COMMENT TO COMMENT LIST UL
+function appendCommentLi(element, comments, championName) {
+  const userNameSpan = document.createElement("span");
+  userNameSpan.textContent = element.username;
+
+  const dateSpan = document.createElement("span");
+  const date = new Date(element.dateCreated);
+  const formattedDate =
+    date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }) +
+    " " +
+    date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  dateSpan.textContent = formattedDate;
+
+  const commentP = document.createElement("p");
+  commentP.textContent = element.comment;
+
+  const commentLi = document.createElement("li");
+  commentLi.append(userNameSpan, dateSpan, commentP);
+
+  const deleteCommentButton = document.createElement("button");
+  deleteCommentButton.textContent = "Delete";
+  deleteCommentButton.addEventListener("click", () => {
+    const updatedComments = comments.filter((comment) => comment !== element);
+    fetch(`http://localhost:3000/champions/${championName}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ comments: updatedComments }),
+    }).then(() => commentLi.remove());
+  });
+  commentLi.append(deleteCommentButton);
+
+  if (document.querySelector("li")) {
+    commentListUl.insertBefore(commentLi, document.querySelector("li"));
+  } else {
+    commentListUl.append(commentLi);
+  }
+}
+
+// RETURNS CLASS CHECKED IN CHECKBOXES
 function filterByTags(tags) {
   if (selectedClasses.size === 0) {
     return true;
@@ -120,6 +206,33 @@ function filterByTags(tags) {
   }
 }
 
+// ADDS EVENT LISTENERS
+function addSearchListener() {
+  searchBar.addEventListener("submit", (e) => {
+    e.preventDefault();
+    handleCloseButton();
+    searchValue = searchBar.query.value.toLowerCase();
+    displayCards(searchValue);
+    // this.query.value = "";
+  });
+}
+function addCheckBoxListener() {
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("change", (event) => {
+      handleCloseButton();
+      const checkbox = event.target;
+      if (checkbox.checked) {
+        selectedClasses.add(checkbox.id);
+      } else {
+        selectedClasses.delete(checkbox.id);
+      }
+      const searchValue = searchBar.query.value.toLowerCase();
+      displayCards(searchValue);
+    });
+  });
+}
+
+// HANDLES EVENTS
 function handleChampionClick(championName) {
   handleCloseButton(championName);
 
@@ -374,70 +487,6 @@ function handleChampionClick(championName) {
   });
 }
 
-// ADDS NEW-COMMENT-FORM AND LOADS EXISTING COMMENTS
-function appendCommentLi(element, comments, championName) {
-  const userNameSpan = document.createElement("span");
-  userNameSpan.textContent = element.username;
-
-  const dateSpan = document.createElement("span");
-  const date = new Date(element.dateCreated);
-  const formattedDate =
-    date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "2-digit",
-      year: "numeric",
-    }) +
-    " " +
-    date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  dateSpan.textContent = formattedDate;
-
-  const commentP = document.createElement("p");
-  commentP.textContent = element.comment;
-
-  const commentLi = document.createElement("li");
-  commentLi.append(userNameSpan, dateSpan, commentP);
-
-  const deleteCommentButton = document.createElement("button");
-  deleteCommentButton.textContent = "Delete";
-  deleteCommentButton.addEventListener("click", () => {
-    const updatedComments = comments.filter((comment) => comment !== element);
-    fetch(`http://localhost:3000/champions/${championName}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ comments: updatedComments }),
-    }).then(() => commentLi.remove());
-  });
-  commentLi.append(deleteCommentButton);
-
-  if (document.querySelector("li")) {
-    commentListUl.insertBefore(commentLi, document.querySelector("li"));
-  } else {
-    commentListUl.append(commentLi);
-  }
-}
-
-function getComments(championName) {
-  fetch(`http://localhost:3000/champions/${championName}`)
-    .then((res) => res.json())
-    .then((data) => {
-      commentSectionDiv.className = "";
-      commentListUl.innerHTML = "";
-
-      const comments = data.comments;
-      // const sortedComments = comments.sort(
-      //   (a, b) => new Date(a.dateCreated) - new Date(b.dateCreated)
-      // );
-      // console.log(sortedComments);
-      comments.forEach((element) => {
-        appendCommentLi(element, comments, championName);
-      });
-    });
-}
-
 function handleCommentFormSubmit(championName) {
   fetch(`http://localhost:3000/champions/${championName}`)
     .then((res) => res.json())
@@ -464,52 +513,15 @@ function handleCommentFormSubmit(championName) {
     });
 }
 
-function addCommentForm(championName) {
-  const formExists = document.querySelector("#new-comment-form");
-  if (formExists) {
-    formExists.remove();
+function handleCloseButton() {
+  descriptionDiv.innerHTML = "";
+  descriptionDiv.className = "hidden";
+  commentListUl.innerHTML = "";
+  const newCommentForm = document.querySelector("#new-comment-form");
+  if (newCommentForm) {
+    newCommentForm.remove();
   }
-  const usernameLabel = document.createElement("label");
-  usernameLabel.textContent = "Username: ";
-  usernameLabel.setAttribute("for", "username");
-
-  const usernameInput = document.createElement("input");
-  usernameInput.type = "text";
-  usernameInput.id = "username";
-  usernameInput.name = "username";
-
-  const commentLabel = document.createElement("label");
-  commentLabel.textContent = "Comment: ";
-  commentLabel.setAttribute("for", "comment");
-
-  const commentTextArea = document.createElement("textarea");
-  commentTextArea.id = "comment";
-  commentTextArea.name = "comment";
-  commentTextArea.rows = 5;
-  commentTextArea.cols = "35";
-
-  const commentInput = document.createElement("input");
-  commentInput.type = "submit";
-  commentInput.id = "submit-button";
-  commentInput.value = "Post Comment";
-
-  const commentForm = document.createElement("form");
-  commentForm.id = "new-comment-form";
-  commentForm.append(
-    usernameLabel,
-    usernameInput,
-    commentLabel,
-    commentTextArea,
-    commentInput
-  );
-
-  commentForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-
-    handleCommentFormSubmit(championName);
-  });
-
-  commentSectionDiv.insertBefore(commentForm, commentListUl);
+  commentSectionDiv.className = "hidden";
 }
 
 // displayCards();
