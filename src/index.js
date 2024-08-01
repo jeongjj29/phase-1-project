@@ -3,28 +3,34 @@ const descriptionDiv = document.querySelector("#description");
 const commentSectionDiv = document.querySelector("#comment-section");
 const commentListUl = document.querySelector("#comment-list");
 
-// fetch champion names
-function displayCards(searchValue) {
-  collectionDiv.innerHTML = "";
+const championsArray = [];
+
+function getChampions() {
   fetch(
     "https://ddragon.leagueoflegends.com/cdn/14.3.1/data/en_US/champion.json"
   )
     .then((res) => res.json())
     .then((lol) => {
-      const champions = Object.values(lol.data)
-        .filter((champion) => {
-          if (searchValue) {
-            return champion.id.toLowerCase().startsWith(searchValue);
-          } else {
-            return true;
-          }
-        })
-        .filter((champion) => filterByTags(champion.tags));
+      championsArray.push(...Object.values(lol.data));
+    })
+    .then(() => displayCards());
+}
 
-      champions.forEach((champion) =>
-        createChampionCard(champion.id, champion.name, champion.tags)
-      );
-    });
+function displayCards(searchValue) {
+  collectionDiv.innerHTML = "";
+  const champions = championsArray
+    .filter((champion) => {
+      if (searchValue) {
+        return champion.id.toLowerCase().startsWith(searchValue);
+      } else {
+        return true;
+      }
+    })
+    .filter((champion) => filterByTags(champion.tags));
+
+  champions.forEach((champion) =>
+    createChampionCard(champion.id, champion.name, champion.tags)
+  );
 }
 
 function handleCloseButton() {
@@ -506,4 +512,5 @@ function addCommentForm(championName) {
   commentSectionDiv.insertBefore(commentForm, commentListUl);
 }
 
-displayCards();
+// displayCards();
+getChampions();
