@@ -11,47 +11,38 @@ function displayCards(searchValue) {
   )
     .then((res) => res.json())
     .then((lol) => {
-      const champions = lol.data;
-
-      if (searchValue) {
-        for (let champion in champions) {
-          const championData = champions[champion];
-          const championNameLowerCase = champion.toLowerCase();
-          const championTags = championData.tags;
-
-          if (
-            championNameLowerCase.startsWith(searchValue) &&
-            filterByTags(championTags)
-          ) {
-            const championName = championData.name;
-            createChampionCard(champion, championName);
+      const champions = Object.values(lol.data)
+        .filter((champion) => {
+          if (searchValue) {
+            return champion.id.toLowerCase().startsWith(searchValue);
+          } else {
+            return true;
           }
-        }
-      } else if (!searchValue) {
-        for (let champion in champions) {
-          const championData = champions[champion];
-          const championNameLowerCase = champion.toLowerCase();
-          const championTags = championData.tags;
+        })
+        .filter((champion) => filterByTags(champion.tags));
 
-          if (filterByTags(championTags)) {
-            const championName = championData.name;
-            createChampionCard(champion, championName);
-          }
-        }
-      }
+      champions.forEach((champion) =>
+        createChampionCard(champion.id, champion.name, champion.tags)
+      );
     });
 }
 
 function handleCloseButton() {
   descriptionDiv.innerHTML = "";
   descriptionDiv.className = "hidden";
+  commentListUl.innerHTML = "";
+  const newCommentForm = document.querySelector("#new-comment-form");
+  if (newCommentForm) {
+    newCommentForm.remove();
+  }
   commentSectionDiv.className = "hidden";
 }
 
 // creates cards and appends them to the collectionDiv
-function createChampionCard(champId, champName) {
+function createChampionCard(champId, champName, championTags) {
   const cardDiv = document.createElement("div");
   cardDiv.id = champId;
+  cardDiv.classList.add(...championTags);
 
   const champNameP = document.createElement("p");
   champNameP.textContent = champName;
@@ -65,12 +56,6 @@ function createChampionCard(champId, champName) {
 
   champImg.addEventListener("click", () => {
     handleChampionClick(champId);
-  });
-  champImg.addEventListener("mouseenter", () => {
-    champImg.style.cursor = "pointer";
-  });
-  champImg.addEventListener("mouseleave", () => {
-    champImg.style.cursor = "default";
   });
 
   cardDiv.append(champImg, champNameP);
@@ -100,7 +85,7 @@ searchBar.addEventListener("submit", (e) => {
   handleCloseButton();
   searchValue = searchBar.query.value.toLowerCase();
   displayCards(searchValue);
-  this.query.value = "";
+  // this.query.value = "";
 });
 
 const checkboxes = document.querySelectorAll("input[type='checkbox']");
@@ -126,7 +111,6 @@ function filterByTags(tags) {
     return [...selectedClasses].every((selectedClass) =>
       tags.includes(selectedClass)
     );
-    // return tags.some((tag) => selectedClasses.has(tag));
   }
 }
 
@@ -378,6 +362,10 @@ function handleChampionClick(championName) {
     });
   addCommentForm(championName);
   getComments(championName);
+  window.scrollTo({
+    top: 100,
+    behavior: "smooth",
+  });
 }
 
 // ADDS NEW-COMMENT-FORM AND LOADS EXISTING COMMENTS
