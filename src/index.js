@@ -251,6 +251,8 @@ function handleChampionClick(championName) {
       const partype = championData.partype;
       const info = championData.info;
 
+      console.log(stats);
+
       // IMAGE DIV
       const imageSection = document.createElement("section");
       imageSection.id = "splashArt";
@@ -340,128 +342,43 @@ function handleChampionClick(championName) {
       const statsH3 = document.createElement("h3");
       statsH3.textContent = "Stats";
 
-      const hpDiv = document.createElement("div");
-      hpDiv.className = "stat";
-      const hpH4 = document.createElement("h5");
-      hpH4.textContent = "Health";
-      const hpValueSpan = document.createElement("span");
-      hpValueSpan.textContent = stats.hp;
-      const hpPerLvlSpan = document.createElement("span");
-      hpPerLvlSpan.textContent = ` ( +${stats.hpperlevel} per Level )`;
-      const hpSpan = document.createElement("span");
-      hpDiv.append(hpH4, hpValueSpan, hpPerLvlSpan);
-
-      const mpDiv = document.createElement("div");
-      mpDiv.className = "stat";
-      const mpH4 = document.createElement("h5");
-      mpH4.textContent = "Resource";
-      const mpValueSpan = document.createElement("span");
-      mpValueSpan.textContent = stats.mp ? stats.mp : "N/A";
-      const mpPerLvlSpan = document.createElement("span");
-      mpPerLvlSpan.textContent = stats.mpperlevel
-        ? ` ( +${stats.mpperlevel} per Level )`
-        : "";
-      if (stats.mp) {
-        mpDiv.append(mpH4, mpValueSpan, mpPerLvlSpan);
-      } else {
-        mpDiv.append(mpH4, mpValueSpan);
-      }
-
-      const hpregenDiv = document.createElement("div");
-      hpregenDiv.className = "stat";
-      const hpregenH4 = document.createElement("h5");
-      hpregenH4.textContent = "Health Regen";
-      const hpregenValueSpan = document.createElement("span");
-      hpregenValueSpan.textContent = stats.hpregen;
-      const hpregenPerLvlSpan = document.createElement("span");
-      hpregenPerLvlSpan.textContent = ` ( +${stats.hpregenperlevel} per Level )`;
-      hpregenDiv.append(hpregenH4, hpregenValueSpan, hpregenPerLvlSpan);
-
-      const mpregenDiv = document.createElement("div");
-      mpregenDiv.className = "stat";
-      const mpregenH4 = document.createElement("h5");
-      mpregenH4.textContent = "Resource Regen";
-      const mpregenValueSpan = document.createElement("span");
-      mpregenValueSpan.textContent = stats.mpregen ? stats.mpregen : "N/A";
-      const mpregenPerLvlSpan = document.createElement("span");
-      mpregenPerLvlSpan.textContent = stats.mpregenperlevel
-        ? ` ( +${stats.mpregenperlevel} per Level )`
-        : "";
-      if (stats.mp) {
-        mpregenDiv.append(mpregenH4, mpregenValueSpan, mpregenPerLvlSpan);
-      } else {
-        mpregenDiv.append(mpregenH4, mpregenValueSpan);
-      }
-
-      const armorDiv = document.createElement("div");
-      armorDiv.className = "stat";
-      const armorH4 = document.createElement("h5");
-      armorH4.textContent = "Armor";
-      const armorValueSpan = document.createElement("span");
-      armorValueSpan.textContent = stats.armor;
-      const armorPerLvlSpan = document.createElement("span");
-      armorPerLvlSpan.textContent = ` ( +${stats.armorperlevel} per Level )`;
-      armorDiv.append(armorH4, armorValueSpan, armorPerLvlSpan);
-
-      const mrDiv = document.createElement("div");
-      mrDiv.className = "stat";
-      const mrH4 = document.createElement("h5");
-      mrH4.textContent = "Magic Resist";
-      const mrValueSpan = document.createElement("span");
-      mrValueSpan.textContent = stats.spellblock;
-      const mrPerLvlSpan = document.createElement("span");
-      mrPerLvlSpan.textContent = ` ( +${stats.spellblockperlevel} per Level )`;
-      mrDiv.append(mrH4, mrValueSpan, mrPerLvlSpan);
-
-      const adDiv = document.createElement("div");
-      adDiv.className = "stat";
-      const adH4 = document.createElement("h5");
-      adH4.textContent = "Attack Damage";
-      const adValueSpan = document.createElement("span");
-      adValueSpan.textContent = stats.attackdamage;
-      const adPerLvlSpan = document.createElement("span");
-      adPerLvlSpan.textContent = ` ( +${stats.attackdamageperlevel} per Level )`;
-      adDiv.append(adH4, adValueSpan, adPerLvlSpan);
-
-      const asDiv = document.createElement("div");
-      asDiv.className = "stat";
-      const asH4 = document.createElement("h5");
-      asH4.textContent = "Attack Speed";
-      const asValueSpan = document.createElement("span");
-      asValueSpan.textContent = stats.attackspeed;
-      const asPerLevelSpan = document.createElement("span");
-      asPerLevelSpan.textContent = ` ( +${stats.attackspeedperlevel}% per Level )`;
-      asDiv.append(asH4, asValueSpan, asPerLevelSpan);
-
-      const movespdDiv = document.createElement("div");
-      movespdDiv.className = "stat";
-      const movespdH4 = document.createElement("h5");
-      movespdH4.textContent = "Movement Speed";
-      const movespdValueSpan = document.createElement("span");
-      movespdValueSpan.textContent = stats.movespeed;
-      movespdDiv.append(movespdH4, movespdValueSpan);
-
-      const atkrngDiv = document.createElement("div");
-      atkrngDiv.className = "stat";
-      const atkrngH4 = document.createElement("h5");
-      atkrngH4.textContent = "Attack Range";
-      const atkrngValueSpan = document.createElement("span");
-      atkrngValueSpan.textContent = stats.attackrange;
-      atkrngDiv.append(atkrngH4, atkrngValueSpan);
-
-      statsSection.append(
-        statsH3,
-        hpDiv,
-        hpregenDiv,
-        mpDiv,
-        mpregenDiv,
-        armorDiv,
-        mrDiv,
-        adDiv,
-        asDiv,
-        movespdDiv,
-        atkrngDiv
-      );
+      const statDivs = [
+        createStatElement("Health", stats.hp, stats.hpperlevel),
+        createStatElement("HP Regen", stats.hpregen, stats.hpregenperlevel),
+        createStatElement("Resource", stats.mp, stats.mpperlevel),
+        createStatElement(
+          "Resource Regen",
+          stats.mpregen,
+          stats.mpregenperlevel
+        ),
+        createStatElement("Armor", stats.armor, stats.armorperlevel),
+        createStatElement(
+          "Magic Resist",
+          stats.spellblock,
+          stats.spellblockperlevel
+        ),
+        createStatElement(
+          "Attack Damage",
+          stats.attackdamage,
+          stats.attackdamageperlevel
+        ),
+        createStatElement(
+          "Attack Speed",
+          stats.attackspeed,
+          stats.attackspeedperlevel
+        ),
+        createStatElement(
+          "Movement Speed",
+          stats.movespeed,
+          stats.movespeedperlevel
+        ),
+        createStatElement(
+          "Attack Range",
+          stats.attackrange,
+          stats.attackrangeperlevel
+        ),
+      ];
+      statsSection.append(statsH3, ...statDivs);
 
       const infoContainerDiv = document.createElement("div");
       infoContainerDiv.id = "champion-info";
@@ -486,6 +403,62 @@ function handleChampionClick(championName) {
     behavior: "smooth",
   });
 }
+
+function createStatElement(statName, baseValue, perLevel) {
+  const statDiv = document.createElement("div");
+  statDiv.className = "stat";
+
+  const statH4 = document.createElement("h5");
+  statH4.textContent = statName;
+
+  const statValueSpan = document.createElement("span");
+  statValueSpan.textContent = baseValue ? baseValue : "N/A";
+
+  const statPerLevelSpan = document.createElement("span");
+  statPerLevelSpan.textContent = perLevel ? ` ( +${perLevel} per Level )` : "";
+
+  statDiv.append(statH4, statValueSpan, statPerLevelSpan);
+
+  return statDiv;
+}
+
+// RETURNS MODIFIED STAT NAME
+// function modifyStatName(stat) {
+//   switch (stat) {
+//     case "hp":
+//       return "Health";
+//       break;
+//     case "hpregen":
+//       return "Health Regen";
+//       break;
+//     case "mp":
+//       return "Resource";
+//       break;
+//     case "mpregen":
+//       return "Resource Regen";
+//       break;
+//     case "armor":
+//       return "Armor";
+//       break;
+//     case "spellblock":
+//       return "Magic Resist";
+//       break;
+//     case "attackdamage":
+//       return "Attack Damage";
+//       break;
+//     case "attackspeed":
+//       return "Attack Speed";
+//       break;
+//     case "movespeed":
+//       return "Movement Speed";
+//       break;
+//     case "attackrange":
+//       return "Attack Range";
+//       break;
+//     default:
+//       return "Stat Not Found";
+//   }
+// }
 
 function handleCommentFormSubmit(championName) {
   fetch(`http://localhost:3000/champions/${championName}`)
@@ -524,5 +497,4 @@ function handleCloseButton() {
   commentSectionDiv.className = "hidden";
 }
 
-// displayCards();
 getChampions();
