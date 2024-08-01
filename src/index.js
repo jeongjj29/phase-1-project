@@ -346,9 +346,7 @@ function handleChampionClick(championName) {
       atkrngValueSpan.textContent = stats.attackrange;
       atkrngDiv.append(atkrngH4, atkrngValueSpan);
 
-      const statsContainerDiv = document.createElement("div");
-      statsContainerDiv.id = "stats-container";
-      statsContainerDiv.append(
+      statsSection.append(
         statsH3,
         hpDiv,
         hpregenDiv,
@@ -361,7 +359,6 @@ function handleChampionClick(championName) {
         movespdDiv,
         atkrngDiv
       );
-      statsSection.append(statsContainerDiv);
 
       const infoContainerDiv = document.createElement("div");
       infoContainerDiv.id = "champion-info";
