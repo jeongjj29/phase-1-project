@@ -82,6 +82,7 @@ img.icon {
   background-image: radial-gradient(circle, #091428, #0a323c);
   height: auto;
   width: 100px;
+  cursor: pointer;
 }
 
 #collection p {
@@ -231,6 +232,10 @@ div.tag h3 {
   display: none;
 }
 
+#comment-section.hidden {
+  display: none;
+}
+
 #queries {
   display: flex;
   justify-content: center;
@@ -248,7 +253,7 @@ div.tag h3 {
 #search #query {
   width: 260px;
   height: 25px;
-  font-size: 20px;
+  font-size: 18px;
   border-radius: 4px;
   margin-top: 10px;
 }
